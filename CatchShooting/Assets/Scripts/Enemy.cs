@@ -65,6 +65,7 @@ public class Enemy : MonoBehaviour {
         m_num = Random.Range(0, 3);
 
         m_awakeSprite = GetComponent<SpriteRenderer>().sprite;
+
     }
 
     // 毎フレーム呼び出される関数
@@ -78,58 +79,64 @@ public class Enemy : MonoBehaviour {
 
             // プレイヤーを追尾する場合
             if (m_isFollow)
-                {
-                    GetComponent<FollowEnemy>().Follow(m_speed);
-                    return;
-                }
-
-                // プレイヤーから逃げる敵の場合
-                if (m_isEscape)
-                {
-                    m_direction = GetComponent<EscapeEnemy>().Escape(m_escapeDistance, m_direction);
-                }
-
-                // まっすぐ移動する
-                transform.localPosition += m_direction * m_speed;
-
-
-            }
-            else
             {
-                var renderer = GetComponent<SpriteRenderer>();
-                renderer.sprite = m_downSprite;
+                GetComponent<FollowEnemy>().Follow(m_speed);
+                return;
+            }
 
-                m_count++;
+            // プレイヤーから逃げる敵の場合
+            if (m_isEscape)
+            {
+                m_direction = GetComponent<EscapeEnemy>().Escape(m_escapeDistance, m_direction);
+            }
 
-                switch (m_num)
-                {
-                    case 0:
-                        if (m_count % 180 == 0)
-                        {
-                            m_isAwake = true;
-                            m_hp = m_hpMax;
-                        }
-                        break;
-                    case 1:
-                        if (m_count % 240 == 0)
-                        {
-                            m_isAwake = true;
-                            m_hp = m_hpMax;
-                        }
-                        break;
-                    case 2:
-                        if (m_count % 300 == 0)
-                        {
-                            m_isAwake = true;
-                            m_hp = m_hpMax;
-                        }
-                        break;
+            // まっすぐ移動する
+            transform.localPosition += m_direction * m_speed;
 
-                }
+            var angle = Utils.GetAngle(Vector3.zero, m_direction);
+
+            var angles = transform.localEulerAngles;
+            angles.z = angle - 90;
+            transform.localEulerAngles = angles;
+
+
+        }
+        else
+         {
+             var renderer = GetComponent<SpriteRenderer>();
+             renderer.sprite = m_downSprite;
+
+             m_count++;
+
+             switch (m_num)
+             {
+                 case 0:
+                     if (m_count % 180 == 0)
+                     {
+                         m_isAwake = true;
+                         m_hp = m_hpMax;
+                     }
+                     break;
+                 case 1:
+                     if (m_count % 240 == 0)
+                     {
+                         m_isAwake = true;
+                         m_hp = m_hpMax;
+                     }
+                     break;
+                 case 2:
+                     if (m_count % 300 == 0)
+                     {
+                         m_isAwake = true;
+                         m_hp = m_hpMax;
+                     }
+                     break;
+
+             }
         }
 
         // 気絶回数が一定を超えたら敵を消す
-        if(m_arivaCount <= 0)
+        if (m_arivaCount <= 0)
         {
             // 超えて敵が死亡した場合スコアを減らす
             m_score.Score -= 10;
