@@ -8,17 +8,13 @@ public class Data{
 
     private static int m_score = 0; // スコアを格納する変数
 
-    public int Score
-    {
-        get
-        {
+    public int Score{
+        get{
             return m_score;
         }
-        set
-        {
+        set{
             m_score = value;
         }
     }
-
 
 }

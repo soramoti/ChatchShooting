@@ -14,7 +14,6 @@ public enum RESPAWN_TYPE
 }
 
 public class Enemy : MonoBehaviour {
-
     public Vector2 m_respawnPosInside; // 敵の出現位置（内側）
     public Vector2 m_respawnPosOutside; // 敵の出現位置（外側）
     public float m_speed; // 移動する速さ
@@ -30,6 +29,7 @@ public class Enemy : MonoBehaviour {
 
     public bool m_isFollow; // プレイヤーを追尾する場合 true
     public bool m_isEscape; // プレイヤーから逃げる場合 true
+    public bool m_isBonus;  // 捕まえたら1秒追加する
     private bool m_isAwake = true; // 敵が起きていたらtrue気絶していたらfalse
 
     public Gem[] m_gemPrefabs; // 宝石のプレハブを管理する配列
@@ -56,8 +56,7 @@ public class Enemy : MonoBehaviour {
     Data m_score = Data.m_instance; // スコアを取得
 
     // 敵が生成された時に呼び出される関数
-    private void Start()
-    {
+    private void Start(){
         // HP を初期化する
         m_hp = m_hpMax;
 
@@ -69,8 +68,7 @@ public class Enemy : MonoBehaviour {
     }
 
     // 毎フレーム呼び出される関数
-    private void Update()
-    {
+    private void Update(){
         // 気絶していなっかたった場合
         if (m_isAwake)
         {
@@ -98,46 +96,37 @@ public class Enemy : MonoBehaviour {
             var angles = transform.localEulerAngles;
             angles.z = angle - 90;
             transform.localEulerAngles = angles;
-
-
         }
-        else
-         {
+        else {
              var renderer = GetComponent<SpriteRenderer>();
              renderer.sprite = m_downSprite;
 
              m_count++;
 
-             switch (m_num)
-             {
+             switch (m_num){
                  case 0:
-                     if (m_count % 180 == 0)
-                     {
+                     if (m_count % 180 == 0){
                          m_isAwake = true;
                          m_hp = m_hpMax;
                      }
                      break;
                  case 1:
-                     if (m_count % 240 == 0)
-                     {
+                     if (m_count % 240 == 0){
                          m_isAwake = true;
                          m_hp = m_hpMax;
                      }
                      break;
                  case 2:
-                     if (m_count % 300 == 0)
-                     {
+                     if (m_count % 300 == 0){
                          m_isAwake = true;
                          m_hp = m_hpMax;
                      }
                      break;
-
              }
         }
 
         // 気絶回数が一定を超えたら敵を消す
-        if (m_arivaCount <= 0)
-        {
+        if (m_arivaCount <= 0){
             // 超えて敵が死亡した場合スコアを減らす
             m_score.Score -= 10;
 
@@ -146,21 +135,17 @@ public class Enemy : MonoBehaviour {
         }
 
         // 一定エリアの外に出たら消す
-        if (Utils.IsOverArea(transform.localPosition))
-        {
+        if (Utils.IsOverArea(transform.localPosition)){
             Destroy(gameObject);
         }
-
     }
 
     // 敵が出現する時に初期化する関数
-    public void Init(RESPAWN_TYPE respawnType)
-    {
+    public void Init(RESPAWN_TYPE respawnType){
         Vector2 pos = Vector3.zero;
 
         // 指定された出現位置の種類に応じて、出現位置と進行方向を決定する
-        switch (respawnType)
-        {
+        switch (respawnType){
             // 出現位置が上の場合
             case RESPAWN_TYPE.UP:
                 pos.x = Random.Range(
@@ -196,13 +181,10 @@ public class Enemy : MonoBehaviour {
     }
 
     // 他のオブジェクトと衝突した時に呼び出される関数
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
+    private void OnTriggerEnter2D(Collider2D collision){
         // プレイヤーと衝突した場合
-        if (collision.name.Contains("Player"))
-        {
-            if(m_isAwake)
-            {
+        if (collision.name.Contains("Player")){
+            if(m_isAwake){
                 // プレイヤーにダメージを与える
                 var player = collision.GetComponent<Player>();
                 player.Damage(m_damage);
@@ -211,10 +193,8 @@ public class Enemy : MonoBehaviour {
         }
 
         // 敵が気絶していて籠に衝突した場合
-        if(collision.name.Contains("Basket"))
-        {
-            if(!m_isAwake)
-            {
+        if(collision.name.Contains("Basket")){
+            if(!m_isAwake){
                 // 捕まえた時に経験値をプレイヤーが獲得
                 var player = FindObjectOfType<Player>();
                 player.AddExp(m_catchExp);
@@ -222,14 +202,18 @@ public class Enemy : MonoBehaviour {
                 // 捕まえた時にスコアを獲得
                 m_score.Score += m_catchScore;
 
+                if(m_isBonus){
+                    var time = FindObjectOfType<PlayContolloer>();
+                    time.MaxTime += 3;
+                }
+
                 // 敵を削除する
                 Destroy(gameObject);
             }
         }
 
         // 弾と衝突した場合
-        if (collision.name.Contains("Shot"))
-        {
+        if (collision.name.Contains("Shot")){
             // 弾が当たった場所に爆発エフェクトを生成する
             Instantiate(
                 m_explosionPrefab,
@@ -239,8 +223,7 @@ public class Enemy : MonoBehaviour {
             // 弾を削除する
             Destroy(collision.gameObject);
 
-            if(m_isAwake)
-            {
+            if(m_isAwake){
                 // 敵の HP を減らす
                 m_hp--;
 
@@ -261,8 +244,7 @@ public class Enemy : MonoBehaviour {
                 // 敵が死亡した場合は宝石を散らばらせる
                 var exp = m_exp;
 
-                while (0 < exp)
-                {
+                while (0 < exp){
                     // 生成可能な宝石を配列で取得する
                     var gemPrefabs = m_gemPrefabs.Where(c => c.m_exp <= exp).ToArray();
 
@@ -279,64 +261,51 @@ public class Enemy : MonoBehaviour {
                     // まだ宝石を生成できるかどうか計算する
                     exp -= gem.m_exp;
                 }
-
             }
-
         }
     }
 
     // 敵の移動の方向を決める関数
-    public Vector2 MoveSlanting(Vector2 position, RESPAWN_TYPE respawnType)
-    {
+    public Vector2 MoveSlanting(Vector2 position, RESPAWN_TYPE respawnType){
         Vector2 direction = Vector2.zero;
 
-        switch (respawnType)
-        {
+        switch (respawnType){
             // 出現位置が上だった時
             case RESPAWN_TYPE.UP:
                 // 中心より右側か左側か
-                if(position.x < 0)
-                {
+                if(position.x < 0){
                     direction = new Vector2(Random.Range(0.0f, 1.0f), -1.0f);
                 }
-                else
-                {
+                else{
                     direction = new Vector2(Random.Range(-1.0f, 0.0f), -1.0f);
                 }
                 break;
             // 出現位置が右だった時
             case RESPAWN_TYPE.RIGHT:
-                if (position.y < 0)
-                {
+                if (position.y < 0){
                     direction = new Vector2(-1.0f, Random.Range(0.0f, 1.0f));
                 }
-                else
-                {
+                else {
                     direction = new Vector2(-1.0f, Random.Range(-1.0f, 0.0f));
                 }
                 break;
             case RESPAWN_TYPE.DOWN:
                 // 中心より右側か左側か
-                if (position.x < 0)
-                {
+                if (position.x < 0){
                     direction = new Vector2(Random.Range(0.0f, 1.0f), 1.0f);
                 }
-                else
-                {
+                else{
                     direction = new Vector2(Random.Range(-1.0f, 0.0f), 1.0f);
                 }
                 break;
             case RESPAWN_TYPE.LEFT:
-                if (position.y < 0)
-                {
+                if (position.y < 0){
                     direction = new Vector2(1.0f, Random.Range(0.0f, 1.0f));
                 }
-                else
-                {
+                else{
                     direction = new Vector2(1.0f, Random.Range(-1.0f, 0.0f));
                 }
                 break;
-
         }
         return direction;
     }

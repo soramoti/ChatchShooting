@@ -102,7 +102,7 @@ MonoBehaviour:
   m_respawnPosInside: {x: 4.8, y: 3.5}
   m_respawnPosOutside: {x: 5.8, y: 4.4}
   m_speed: 0.03
-  m_hpMax: 2
+  m_hpMax: 3
   m_exp: 0
   m_catchExp: 4
   m_damage: 0
@@ -110,6 +110,7 @@ MonoBehaviour:
     type: 2}
   m_isFollow: 0
   m_isEscape: 0
+  m_isBonus: 1
   m_gemPrefabs:
   - {fileID: 114557133512673622, guid: 873fa97d50397694f92371ea26a2596f, type: 2}
   - {fileID: 114126578008870978, guid: 9fe3b6f721ed51840a97d31a196acc92, type: 2}

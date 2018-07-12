@@ -5,14 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class GameSystem : MonoBehaviour {
     //　スタートボタンを押したら実行する
-    public void GameStart()
-    {
+    public void GameStart(){
         SceneManager.LoadScene("PlayScene");
     }
 
     //　ゲーム終了ボタンを押したら実行する
-    public void GameEnd()
-    {
+    public void GameEnd(){
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
@@ -21,14 +19,13 @@ public class GameSystem : MonoBehaviour {
     }
 
     // タイトルボタンを押したらタイトルへ戻る
-    public void GameTitle()
-    {
+    public void GameTitle(){
         SceneManager.LoadScene("TitleScene");
     }
 
     // リザルトシーンへ移動する
-    public void GameResult()
-    {
+    public void GameResult(){
         SceneManager.LoadScene("ResultScene");
     }
+
 }

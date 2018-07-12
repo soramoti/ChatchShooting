@@ -7,15 +7,13 @@ public class Shot : MonoBehaviour {
     private Vector3 m_velocity; // 速度
 
     // 毎フレーム呼び出される関数
-    private void Update()
-    {
+    private void Update(){
         // 移動する
         transform.localPosition += m_velocity;
     }
 
     // 弾を発射する時に初期化するための関数
-    public void Init(float angle, float speed)
-    {
+    public void Init(float angle, float speed){
         // 弾の発射角度をベクトルに変換する
         var direction = Utils.GetDirection(angle);
 

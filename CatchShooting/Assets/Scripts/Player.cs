@@ -16,9 +16,6 @@ public class Player : MonoBehaviour {
     public int m_shotCount; // 弾の発射数
     public float m_shotInterval; // 弾の発射間隔（秒）
 
-    public int m_hpMax; // HP の最大値
-    public int m_hp; // HP
-
     public float m_magnetDistance; // 宝石を引きつける距離
 
     public int m_nextExpBase; // 次のレベルまでに必要な経験値の基本値
@@ -42,14 +39,11 @@ public class Player : MonoBehaviour {
     private Data m_score = Data.m_instance; // スコアを取得
 
     // ゲーム開始時に呼び出される関数
-    private void Awake()
-    {
+    private void Awake(){
         // 他のクラスからプレイヤーを参照できるようにstatic 変数にインスタンス情報を格納する
         m_instance = this;
 
         m_score.Score = 0;  // プレイシーン起動時にスコアを0にする
-
-        m_hp = m_hpMax; // HP
 
         m_level = 1; // レベル
         m_needExp = GetNeedExp(1); // 次のレベルに必要な経験値
@@ -99,14 +93,12 @@ public class Player : MonoBehaviour {
     }
 
     // 弾を発射する関数
-    private void ShootNWay(float angleBase, float angleRange, float speed, int count)
-    {
+    private void ShootNWay(float angleBase, float angleRange, float speed, int count){
         var pos = transform.localPosition; // プレイヤーの位置
         var rot = transform.localRotation; // プレイヤーの向き
 
         // 弾を複数発射する場合
-        if (1 < count)
-        {
+        if (1 < count){
             // 発射する回数分ループする
             for (int i = 0; i < count; ++i)
             {
@@ -122,8 +114,7 @@ public class Player : MonoBehaviour {
             }
         }
         // 弾を 1 つだけ発射する場合
-        else if (count == 1)
-        {
+        else if (count == 1){
             // 発射する弾を生成する
             var shot = Instantiate(m_shotPrefab, pos, rot);
 
@@ -132,30 +123,17 @@ public class Player : MonoBehaviour {
         }
     }
 
-    // ダメージを受ける関数
     // 敵とぶつかった時に呼び出される
-    public void Damage(int damage)
-    {
+    public void Damage(int damage){
         // ダメージを受けた時の SE を再生する
         var audioSource = FindObjectOfType<AudioSource>();
         audioSource.PlayOneShot(m_damageClip);
 
-        // HP を減らす
-        m_hp -= damage;
-
-        // HP がまだある場合、ここで処理を終える
-        if (0 < m_hp) return;
-
-
-        // プレイヤーが死亡したのでリザルトシーンに移動
-        var system = FindObjectOfType<GameSystem>();
-        system.GameResult();
     }
 
     // 経験値を増やす関数
     // 宝石を取得した時に呼び出される
-    public void AddExp(int exp)
-    {
+    public void AddExp(int exp){
         // 経験値を増やす
         m_exp += exp;
 
@@ -198,8 +176,7 @@ public class Player : MonoBehaviour {
     }
 
     // 指定されたレベルに必要な経験値を計算する関数
-    private int GetNeedExp(int level)
-    {
+    private int GetNeedExp(int level){
         /*
          * 例えば、m_nextExpBase が 16、m_nextExpInterval が 18 の場合、
          *

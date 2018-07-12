@@ -751,7 +751,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1046414049}
-        m_MethodName: ReturnTitle
+        m_MethodName: GameTitle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
