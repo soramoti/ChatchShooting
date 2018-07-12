@@ -31,7 +31,6 @@ public class PlayContolloer : MonoBehaviour {
 	void Update () {
         m_time = m_MaxTime - Time.time;
 
-        Debug.Log((int)m_time);
         if(m_time <= 0){
             var scene = FindObjectOfType<GameSystem>();
             scene.GameResult();
